@@ -4,7 +4,7 @@ from google.cloud import vision
 
 app = Flask(__name__)
 
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'D:\Documents\Codes\JetBrains_WebStorm_Codes\PyCharm-Projects\pythonProject\kuickhackhackatonimagelabels-57374b99c466.json'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'kuickhackhackatonimagelabels-57374b99c466.json'
 
 
 def detect_labels(image_content):
