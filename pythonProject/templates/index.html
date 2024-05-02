@@ -4,6 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Unhealthy Habits Detection</title>
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
 <h1>Unhealthy Habits Detection</h1>
@@ -17,44 +18,44 @@
 <div id="labels-container"></div>
 
 <script>
+    let uploadCount = 0;
+    let uploadLimit = 5;
+
     function uploadFile() {
-        var fileInput = document.getElementById('file-input');
-        var file = fileInput.files[0];
-        var formData = new FormData();
+        if (uploadCount >= uploadLimit) {
+            alert(`Queue overheated. Please wait 60 seconds.`);
+            return;
+        }
+        let fileInput = document.getElementById('file-input');
+        let file = fileInput.files[0];
+        let formData = new FormData();
         formData.append('file', file);
 
-        var xhr = new XMLHttpRequest();
+        let xhr = new XMLHttpRequest();
         xhr.open('POST', '/');
-        xhr.onload = function() {
+        xhr.onload = function () {
             if (xhr.status === 200) {
-                var response = JSON.parse(xhr.responseText);
-                var labelsContainer = document.getElementById('labels-container');
+                let response = JSON.parse(xhr.responseText);
+                let labelsContainer = document.getElementById('labels-container');
                 labelsContainer.innerHTML = '';
 
                 if (response.error) {
                     labelsContainer.innerText = 'Error: ' + response.error;
                 } else {
-                    var labels = response.labels;
-                    var hasForbiddenLabel = response.forbidden;
+                    let hasForbiddenLabel = response.forbidden;
                     if (hasForbiddenLabel) {
-                        var forbiddenMessage = document.createElement('p');
-                        forbiddenMessage.innerText = 'The image contains forbidden labels:';
-                        labelsContainer.appendChild(forbiddenMessage);
-                        var ul = document.createElement('ul');
-                        labels.forEach(function(label) {
-                            var li = document.createElement('li');
-                            li.innerText = label;
-                            ul.appendChild(li);
-                        });
-                        labelsContainer.appendChild(ul);
+                        alert('The image contains forbidden content.');
+                        let uploadedImage = document.getElementById('uploaded-image');
+                        uploadedImage.style.display = 'none';
                     } else {
-                        var uploadedImage = document.getElementById('uploaded-image');
+                        let labels = response.labels;
+                        let uploadedImage = document.getElementById('uploaded-image');
                         uploadedImage.src = URL.createObjectURL(file);
                         uploadedImage.style.display = 'block';
                         if (labels && labels.length > 0) {
-                            var ul = document.createElement('ul');
-                            labels.forEach(function(label) {
-                                var li = document.createElement('li');
+                            let ul = document.createElement('ul');
+                            labels.forEach(function (label) {
+                                let li = document.createElement('li');
                                 li.innerText = label;
                                 ul.appendChild(li);
                             });
@@ -65,11 +66,15 @@
                     }
                 }
             } else {
-                var errorMessage = document.getElementById('error-message');
+                let errorMessage = document.getElementById('error-message');
                 errorMessage.innerText = 'Error: ' + xhr.statusText;
             }
         };
         xhr.send(formData);
+        uploadCount++;
+        setTimeout(function() {
+            uploadCount--;
+        }, 60000);
     }
 </script>
 </body>
