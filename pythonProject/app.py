@@ -4,7 +4,14 @@ from google.cloud import vision
 
 app = Flask(__name__)
 
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'D:\Documents\Codes\JetBrains_WebStorm_Codes\PyCharm-Projects\pythonProject\kuickhackhackatonimagelabels-57374b99c466.json'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'kuickhackhackatonimagelabels-57374b99c466.json'
+
+FORBIDDEN_LABELS = [
+    "meat", "cigarette", "fast food", "casino", "alcohol", "drugs",
+    "gambling", "junk food", "sugar", "soda", "smoking", "overeating",
+    "sedentary", "lack of exercise", "sleep deprivation", "red meat",
+    "tobacco", "casino", "advertisement", "poster"
+]
 
 
 def detect_labels(image_content):
@@ -14,8 +21,9 @@ def detect_labels(image_content):
     labels = response.label_annotations
 
     detected_labels = [label.description.lower() for label in labels]
+    has_forbidden_label = any(label in detected_labels for label in FORBIDDEN_LABELS)
 
-    return detected_labels
+    return detected_labels, has_forbidden_label
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -27,8 +35,8 @@ def index():
         if file.filename == '':
             return jsonify({'error': 'No selected file'})
         content = file.read()
-        labels = detect_labels(content)
-        return jsonify({'labels': labels})
+        labels, has_forbidden_label = detect_labels(content)
+        return jsonify({'labels': labels, 'forbidden': has_forbidden_label})
 
     return render_template('index.html')
 
