@@ -10,7 +10,7 @@ FORBIDDEN_LABELS = [
     "meat", "cigarette", "fast food", "casino", "alcohol", "drugs",
     "gambling", "junk food", "sugar", "soda", "smoking", "overeating",
     "sedentary", "lack of exercise", "sleep deprivation", "red meat",
-    "tobacco", "casino", "advertisement", "poster"
+    "tobacco", "casino", "advertisement", "poster", "gas", "fire"
 ]
 
 
